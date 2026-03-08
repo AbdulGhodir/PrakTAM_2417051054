@@ -1,8 +1,8 @@
-package Model
+package model
 import com.example.praktam2_2417051054.R
 
 object BarangSource {
-    val listBarang = listOf(
+    val listBarangs = listOf(
         Barang(nama = "Tepung 1Kg", harga = 10000, stok = 50, ImagesRes = R.drawable.tepung),
         Barang(nama = "Indomie", harga = 3500, stok = 100, ImagesRes = R.drawable.indomie),
         Barang(nama = "Beras 5Kg", harga = 80000, stok = 10, ImagesRes = R.drawable.beras),
