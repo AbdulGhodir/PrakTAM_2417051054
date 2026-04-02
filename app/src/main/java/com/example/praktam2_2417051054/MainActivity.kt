@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -59,7 +60,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.praktam2_2417051054.ui.theme.PrakTAM2_2417051054Theme
+import com.example.praktam2_2417051054.ui.theme.*
+import androidx.compose.material3.MaterialTheme
 import model.Barang
 import model.BarangSource
 
@@ -69,13 +71,13 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge(
             // Buat status bar yang di atas hp yang ada wifi, baterai, jam dll warnanya nyatu sama aplikasi
             statusBarStyle = SystemBarStyle.dark(
-                scrim = Color(0xFF1e293b).hashCode()
+                scrim = AbuTua.hashCode()
             ),
 
             // Buat tombol navigasi hp yang di bawah (back, home, task) warnanya nyatu sama aplikasi
             navigationBarStyle = SystemBarStyle.light(
-                scrim = Color.White.hashCode(),
-                darkScrim = Color.White.hashCode()
+                scrim = SurfacePutih.hashCode(),
+                darkScrim = SurfacePutih.hashCode()
             )
         )
         setContent {
@@ -90,13 +92,9 @@ class MainActivity : ComponentActivity() {
 fun Main(page: String) {
     Scaffold( modifier = Modifier.fillMaxSize() ) { innerPadding ->
         if (page == "Dashboard") {
-            DashboardScreen(
-                modifier = Modifier.padding(innerPadding)
-            )
+            DashboardScreen(modifier = Modifier.padding(innerPadding))
         } else if (page == "Kasir") {
-            KasirScreen(
-                modifier = Modifier.padding(innerPadding)
-            )
+            KasirScreen(modifier = Modifier.padding(innerPadding))
         }
     }
 }
@@ -106,7 +104,7 @@ fun DashboardScreen(modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color(0xFFE2E8F0))
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Column(
             modifier = Modifier
@@ -117,29 +115,25 @@ fun DashboardScreen(modifier: Modifier = Modifier) {
             Spacer(modifier = Modifier.height(235.dp))
 
             Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(20.dp)
             ) {
                 Card(
                     modifier = Modifier
                         .weight(1f)
-                        .border(width = 2.dp, color = Color(0xFFf1f5f9), shape = RoundedCornerShape(20.dp)),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                        .border(width = 2.dp, color = MaterialTheme.colorScheme.surfaceVariant, shape = RoundedCornerShape(20.dp)),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                     elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
                     shape = RoundedCornerShape(20.dp)
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .padding(20.dp, 15.dp),
-                    ) {
-                        Text(text = "Total Transaksi", fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                    Column(modifier = Modifier.padding(20.dp, 15.dp)) {
+                        Text(text = "Total Transaksi", style = MaterialTheme.typography.labelLarge)
 
                         Spacer(Modifier.height(5.dp))
 
                         Row(verticalAlignment = Alignment.Bottom) {
-                            Text(text = "45", fontSize = 25.sp, fontWeight = FontWeight.Bold)
-                            Text(text = " Pelanggan", fontSize = 11.sp, color = Color(0xFF64748b))
+                            Text(text = "45", style = MaterialTheme.typography.headlineLarge)
+                            Text(text = " Pelanggan", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.secondary)
                         }
                     }
                 }
@@ -147,22 +141,19 @@ fun DashboardScreen(modifier: Modifier = Modifier) {
                 Card(
                     modifier = Modifier
                         .weight(1f)
-                        .border(width = 2.dp, color = Color(0xFFf1f5f9), shape = RoundedCornerShape(20.dp)),
-                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                        .border(width = 2.dp, color = MaterialTheme.colorScheme.surfaceVariant, shape = RoundedCornerShape(20.dp)),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                     elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
                     shape = RoundedCornerShape(20.dp)
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .padding(20.dp, 15.dp),
-                    ) {
-                        Text(text = "Barang Terjual", fontSize = 14.sp, fontWeight = FontWeight.Medium)
+                    Column(modifier = Modifier.padding(20.dp, 15.dp)) {
+                        Text(text = "Barang Terjual", style = MaterialTheme.typography.labelLarge)
 
                         Spacer(Modifier.height(5.dp))
 
                         Row(verticalAlignment = Alignment.Bottom) {
-                            Text(text = "100", fontSize = 25.sp, fontWeight = FontWeight.Bold)
-                            Text(text = " Item", fontSize = 11.sp, color = Color(0xFF64748b))
+                            Text(text = "100", style = MaterialTheme.typography.headlineLarge)
+                            Text(text = " Item", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.secondary)
                         }
                     }
                 }
@@ -170,7 +161,7 @@ fun DashboardScreen(modifier: Modifier = Modifier) {
 
             Spacer(Modifier.height(30.dp))
 
-            Text(text = "Menu Utama", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            Text(text = "Menu Utama", style = MaterialTheme.typography.titleMedium)
 
             Spacer(Modifier.height(10.dp))
 
@@ -185,13 +176,13 @@ fun DashboardScreen(modifier: Modifier = Modifier) {
                         modifier = Modifier
                             .size(60.dp)
                             .clip(shape = RoundedCornerShape(20.dp))
-                            .background(color = Color(0xFFf1f5f9))
+                            .background(color = MaterialTheme.colorScheme.surfaceVariant)
                             .padding(10.dp, 15.dp),
-                        tint = Color.Black
+                        tint = MaterialTheme.colorScheme.onSurface
                     )
 
-                    Spacer(Modifier.height(3.dp))
-                    Text(text = "Kasir", fontSize = 13.sp, color = Color(0xFF64748b), fontWeight = FontWeight.Bold)
+                    Spacer(Modifier.height(5.dp))
+                    Text(text = "Kasir", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)
                 }
 
                 Column(
@@ -204,14 +195,13 @@ fun DashboardScreen(modifier: Modifier = Modifier) {
                         modifier = Modifier
                             .size(60.dp)
                             .clip(shape = RoundedCornerShape(20.dp))
-                            .background(color = Color(0xFFf3e8ff))
+                            .background(color = IconUnguBg)
                             .padding(10.dp, 15.dp),
-                        tint = Color(0xFF9333ea)
-
+                        tint = IconUngu
                     )
 
-                    Spacer(Modifier.height(3.dp))
-                    Text(text = "Barang", fontSize = 13.sp, color = Color(0xFF64748b), fontWeight = FontWeight.Bold)
+                    Spacer(Modifier.height(5.dp))
+                    Text(text = "Barang", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)
                 }
 
                 Column(
@@ -224,13 +214,13 @@ fun DashboardScreen(modifier: Modifier = Modifier) {
                         modifier = Modifier
                             .size(60.dp)
                             .clip(shape = RoundedCornerShape(20.dp))
-                            .background(color = Color(0xFFffedd5))
+                            .background(color = IconOrenBg)
                             .padding(10.dp, 15.dp),
-                        tint = Color(0xFFea580c)
+                        tint = IconOren
                     )
 
-                    Spacer(Modifier.height(3.dp))
-                    Text(text = "Riwayat", fontSize = 13.sp, color = Color(0xFF64748b), fontWeight = FontWeight.Bold)
+                    Spacer(Modifier.height(5.dp))
+                    Text(text = "Riwayat", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)
                 }
 
                 Column(
@@ -243,19 +233,19 @@ fun DashboardScreen(modifier: Modifier = Modifier) {
                         modifier = Modifier
                             .size(60.dp)
                             .clip(shape = RoundedCornerShape(20.dp))
-                            .background(color = Color(0xFFD0D5DE))
+                            .background(color = IconAbuBg)
                             .padding(10.dp, 15.dp),
-                        tint = Color(0xFF64748b)
+                        tint = MaterialTheme.colorScheme.secondary
                     )
 
-                    Spacer(Modifier.height(3.dp))
-                    Text(text = "Setting", fontSize = 13.sp, color = Color(0xFF64748b), fontWeight = FontWeight.Bold)
+                    Spacer(Modifier.height(5.dp))
+                    Text(text = "Setting", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)
                 }
             }
 
             Spacer(Modifier.height(30.dp))
 
-            Text(text = "Barang Terlaris", fontSize = 18.sp, fontWeight = FontWeight.Bold)
+            Text(text = "Barang Terlaris", style = MaterialTheme.typography.titleMedium)
 
             Spacer(Modifier.height(15.dp))
 
@@ -271,9 +261,13 @@ fun DashboardScreen(modifier: Modifier = Modifier) {
 
             Spacer(Modifier.height(30.dp))
 
-            Row (modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                Text(text = "Transaksi Terakhir", fontSize = 18.sp, fontWeight = FontWeight.Bold)
-                Text(text = "Lihat Semua", fontSize = 13.sp, fontWeight = FontWeight.Bold)
+            Row (
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = "Transaksi Terakhir", style = MaterialTheme.typography.titleMedium)
+                Text(text = "Lihat Semua", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.secondary)
             }
 
             Spacer(Modifier.height(15.dp))
@@ -283,8 +277,8 @@ fun DashboardScreen(modifier: Modifier = Modifier) {
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .border(width = 2.dp, color = Color(0xFFf1f5f9), shape = RoundedCornerShape(20.dp)),
-                        colors = CardDefaults.cardColors(containerColor = Color.White),
+                            .border(width = 2.dp, color = MaterialTheme.colorScheme.surfaceVariant, shape = RoundedCornerShape(20.dp)),
+                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
                         shape = RoundedCornerShape(20.dp)
                     ) {
@@ -295,28 +289,26 @@ fun DashboardScreen(modifier: Modifier = Modifier) {
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ){
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
                                 Icon(
                                     Icons.Filled.ShoppingCart,
                                     contentDescription = null,
                                     modifier = Modifier
                                         .size(40.dp)
-                                        .background(color = Color(0xFFf1f5f9), shape = CircleShape)
+                                        .background(color = MaterialTheme.colorScheme.surfaceVariant, shape = CircleShape)
                                         .padding(10.dp),
-                                    tint = Color.Black
+                                    tint = MaterialTheme.colorScheme.onSurface
                                 )
 
                                 Spacer(Modifier.width(10.dp))
 
-                                Column(verticalArrangement = Arrangement.spacedBy((-5).dp)) {
-                                    Text(text = "PJ-0000${i}", fontSize = 14.sp, fontWeight = FontWeight.Bold)
-                                    Text(text = "1 Barang", fontSize = 12.sp, color = Color(0xFF64748b))
+                                Column(verticalArrangement = Arrangement.spacedBy((-2).dp)) {
+                                    Text(text = "PJ-0000${i}", style = MaterialTheme.typography.labelLarge)
+                                    Text(text = "1 Barang", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.secondary)
                                 }
                             }
 
-                            Text(text = "Rp 45.000", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                            Text(text = "Rp 45.000", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
                         }
                     }
                 }
@@ -330,11 +322,11 @@ fun DashboardScreen(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .clip(RoundedCornerShape(bottomStart = 30.dp, bottomEnd = 30.dp))
-                    .background(Color(0xFF1e293b))
+                    .background(MaterialTheme.colorScheme.primary)
                     .padding(25.dp, 24.dp, bottom = 80.dp, end = 25.dp)
             ) {
-                Text(text = "Sabtu, 28 Februari 2026", color = Color(0xFF64748b), fontSize = 14.sp)
-                Text(text = "Halo, Abdul!", color = Color.White, fontSize = 25.sp, fontWeight = FontWeight.Bold)
+                Text(text = "Sabtu, 28 Februari 2026", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.secondary)
+                Text(text = "Halo, Abdul!", style = MaterialTheme.typography.headlineLarge, color = MaterialTheme.colorScheme.onPrimary)
             }
 
             Card(
@@ -342,27 +334,22 @@ fun DashboardScreen(modifier: Modifier = Modifier) {
                     .fillMaxWidth()
                     .padding(top = 110.dp)
                     .padding(horizontal = 25.dp)
-                    .border(width = 2.dp, color = Color(0xFFf1f5f9), shape = RoundedCornerShape(20.dp)),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
+                    .border(width = 2.dp, color = MaterialTheme.colorScheme.surfaceVariant, shape = RoundedCornerShape(20.dp)),
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
                 elevation = CardDefaults.cardElevation(defaultElevation = 25.dp),
                 shape = RoundedCornerShape(20.dp)
             ) {
-                Column(
-                    modifier = Modifier
-                        .padding(20.dp)
-                ) {
-                    Text(text = "Pendapatan Hari Ini", fontSize = 14.sp, color = Color(0xFF64748b), fontWeight = FontWeight.Medium)
+                Column(modifier = Modifier.padding(20.dp)) {
+                    Text(text = "Pendapatan Hari Ini", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.secondary)
 
                     Spacer(Modifier.height(3.dp))
 
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(text = "Rp", fontSize = 18.sp, fontWeight = FontWeight.Medium)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(text = "Rp", style = MaterialTheme.typography.titleMedium)
 
                         Spacer(Modifier.width(5.dp))
 
-                        Text(text = "1.000.000", fontSize = 30.sp, fontWeight = FontWeight.Bold)
+                        Text(text = "1.000.000", style = MaterialTheme.typography.displayLarge)
                     }
                 }
             }
@@ -373,9 +360,8 @@ fun DashboardScreen(modifier: Modifier = Modifier) {
 @Composable
 fun DetailBarangTerlaris(barang: Barang) {
     Card(
-        modifier = Modifier
-            .width(125.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        modifier = Modifier.width(125.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         shape = RoundedCornerShape(10.dp)
     ) {
@@ -391,21 +377,21 @@ fun DetailBarangTerlaris(barang: Barang) {
                 modifier = Modifier
                     .size(100.dp)
                     .clip(RoundedCornerShape(10.dp))
-                    .background(Color(0xFFE2E8F0))
+                    .background(MaterialTheme.colorScheme.background)
                     .padding(5.dp)
             )
 
             Spacer(Modifier.height(3.dp))
 
-            Text(text = barang.nama, fontSize = 14.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center, maxLines = 2, minLines = 2)
+            Text(text = barang.nama, style = MaterialTheme.typography.labelMedium, textAlign = TextAlign.Center, maxLines = 2, minLines = 2)
 
             Spacer(Modifier.height(5.dp))
 
             Row(
                 modifier = Modifier
                     .clip(RoundedCornerShape(15.dp))
-                    .background(Color(0xFFffedd5))
-                    .padding(horizontal = 5.dp),
+                    .background(color = IconOrenBg)
+                    .padding(horizontal = 5.dp, vertical = 1.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Icon(
@@ -413,12 +399,12 @@ fun DetailBarangTerlaris(barang: Barang) {
                     contentDescription = null,
                     modifier = Modifier
                         .size(15.dp),
-                    tint = Color(0xFFEA580C)
+                    tint = IconOren
                 )
 
                 Spacer(Modifier.width(2.dp))
 
-                Text(text = "${barang.terjual} Terjual", fontSize = 9.sp, color = Color(0xFFEA580C), fontWeight = FontWeight.Bold)
+                Text(text = "${barang.terjual} Terjual", fontSize = 9.sp, color = IconOren, fontWeight = FontWeight.Bold)
             }
         }
     }
@@ -431,12 +417,13 @@ fun KasirScreen(modifier: Modifier = Modifier) {
     var totalHarga by remember { mutableIntStateOf(0) }
 
     Box (
-        modifier = modifier.fillMaxSize().background(Color(0xFFE2E8F0))
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
     ) {
         // List Item
         LazyColumn(
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(24.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
@@ -463,7 +450,7 @@ fun KasirScreen(modifier: Modifier = Modifier) {
             Modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(bottomEnd = 25.dp, bottomStart = 25.dp))
-                .background(color = Color(0xFF1e293b))
+                .background(color = MaterialTheme.colorScheme.primary)
                 .padding(20.dp, 30.dp)
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -471,12 +458,12 @@ fun KasirScreen(modifier: Modifier = Modifier) {
                     imageVector = Icons.Default.KeyboardArrowLeft,
                     contentDescription = null,
                     modifier = Modifier.size(15.dp).scale(2.5f),
-                    tint = Color.White,
+                    tint = MaterialTheme.colorScheme.onPrimary,
                 )
 
                 Spacer(Modifier.width(20.dp))
 
-                Text(text = "Kasir", color = Color.White, fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                Text(text = "Kasir", color = MaterialTheme.colorScheme.onPrimary, style = MaterialTheme.typography.titleMedium)
             }
 
             Spacer(Modifier.height(30.dp))
@@ -486,11 +473,11 @@ fun KasirScreen(modifier: Modifier = Modifier) {
                 value = searchValue,
                 onValueChange = { teks -> searchValue = teks },
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White
+                    focusedContainerColor = MaterialTheme.colorScheme.surface,
+                    unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                 ),
                 shape = RoundedCornerShape(20.dp),
-                placeholder = { Text(text = "Cari barang...", color = Color.Gray) },
+                placeholder = { Text(text = "Cari barang...", color = MaterialTheme.colorScheme.secondary) },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Search,
@@ -504,26 +491,27 @@ fun KasirScreen(modifier: Modifier = Modifier) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.White)
+                .border(color = MaterialTheme.colorScheme.surfaceVariant, width = 2.dp)
+                .background(MaterialTheme.colorScheme.surface)
                 .padding(25.dp, 20.dp)
                 .align(Alignment.BottomCenter),
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
             Column {
-                Text(text = "$totalItem Item", fontSize = 16.sp, fontWeight = FontWeight.Medium)
-                Text(text = "Rp $totalHarga", fontSize = 25.sp, fontWeight = FontWeight.Bold)
+                Text(text = "$totalItem Item", style = MaterialTheme.typography.bodyLarge)
+                Text(text = "Rp $totalHarga", style = MaterialTheme.typography.headlineLarge)
             }
 
             Button(
-                onClick = { /*TODO*/ },
+                onClick = { },
                 shape = RoundedCornerShape(10.dp),
 
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF1e293b),
-                    contentColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary
                 )
             ) {
-                Text(text = "Bayar", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = Color.White)
+                Text(text = "Bayar", style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.onPrimary)
             }
         }
     }
@@ -535,7 +523,7 @@ fun DetailBarang(barang: Barang) {
         modifier = Modifier
             .fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         shape = RoundedCornerShape(10.dp)
     ) {
         Row(
@@ -550,25 +538,28 @@ fun DetailBarang(barang: Barang) {
                 modifier = Modifier
                     .size(80.dp)
                     .clip(RoundedCornerShape(10.dp))
-                    .background(Color(0xFFE2E8F0))
+                    .background(MaterialTheme.colorScheme.background)
                     .padding(5.dp),
             )
 
             Spacer(Modifier.width(15.dp))
 
-            Column {
-                Text(text = barang.nama, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                Text(text = "Sisa Stok: ${barang.stok}", fontSize = 12.sp)
+            Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                Text(text = barang.nama, style = MaterialTheme.typography.titleLarge)
+                Text(text = "Sisa Stok: ${barang.stok}", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.secondary)
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(text = "Rp ${barang.harga}", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Text(text = "Rp ${barang.harga}", style = MaterialTheme.typography.bodyLarge)
 
                     Row(
-                        modifier = Modifier.border(1.dp, Color(0xFFe2e8f0), RoundedCornerShape(5.dp)),
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(5.dp))
+                            .border(1.dp, MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(5.dp))
+                            .background(color = MaterialTheme.colorScheme.surfaceVariant),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         var jumlahBeli by remember { mutableIntStateOf(0) }
@@ -584,14 +575,14 @@ fun DetailBarang(barang: Barang) {
                             shape = RoundedCornerShape(5.dp),
 
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFFf1f5f9),
-                                contentColor = Color.Black
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                contentColor = MaterialTheme.colorScheme.onSurface
                             )
                         ) {
-                            Text(text = "-", fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                            Text(text = "-", style = MaterialTheme.typography.labelLarge)
                         }
 
-                        Text(text = "$jumlahBeli", fontSize = 15.sp, fontWeight = FontWeight.Medium, modifier = Modifier.width(20.dp).background(Color(0xFFf1f5f9)), textAlign = TextAlign.Center)
+                        Text(text = "$jumlahBeli", style = MaterialTheme.typography.labelLarge, modifier = Modifier.width(20.dp), textAlign = TextAlign.Center)
 
                         Button(
                             onClick = {
@@ -602,11 +593,11 @@ fun DetailBarang(barang: Barang) {
                             shape = RoundedCornerShape(5.dp),
 
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = Color(0xFFf1f5f9),
-                                contentColor = Color.Black
+                                containerColor = MaterialTheme.colorScheme.surfaceVariant,
+                                contentColor = MaterialTheme.colorScheme.onSurface
                             )
                         ) {
-                            Text(text = "+", fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                            Text(text = "+", style = MaterialTheme.typography.labelLarge)
                         }
                     }
                 }
