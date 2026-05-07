@@ -74,9 +74,9 @@ import kotlinx.coroutines.launch
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import network.RetrofitClient
 import coil.compose.AsyncImage
-import model.Barang
+import com.example.praktam2_2417051054.data.model.Barang
+import com.example.praktam2_2417051054.data.repository.BarangRepository
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -132,7 +132,6 @@ fun AppNavigation(navController: NavHostController) {
             }
         }
     }
-
 }
 
 @Composable
@@ -141,9 +140,11 @@ fun DashboardScreen(modifier: Modifier = Modifier, navController: NavController,
     var isLoadingBarang by remember { mutableStateOf(true) }
     var isError by remember { mutableStateOf(false) }
 
+    val repository = remember { BarangRepository() }
+
     LaunchedEffect(Unit) {
         try {
-            listBarang = RetrofitClient.instance.getBarang()
+            listBarang = repository.getBarang()
             onBarangLoaded(listBarang)
             isLoadingBarang = false
         } catch (e: Exception) {
@@ -515,10 +516,12 @@ fun KasirScreen(modifier: Modifier = Modifier, onBarangLoaded: (List<Barang>) ->
     val coroutineScope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
+    val repository = remember { BarangRepository() }
+
 
     LaunchedEffect(Unit) {
         try {
-            listBarang = RetrofitClient.instance.getBarang()
+            listBarang = repository.getBarang()
             onBarangLoaded(listBarang)
             isLoadingBarang = false
         } catch (e: Exception) {

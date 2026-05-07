@@ -1,4 +1,4 @@
-package model
+package com.example.praktam2_2417051054.data.model
 import com.google.gson.annotations.SerializedName
 
 data class Barang(
