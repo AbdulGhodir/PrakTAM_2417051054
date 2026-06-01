@@ -2,6 +2,9 @@ package com.example.praktam2_2417051054.data.model
 import com.google.gson.annotations.SerializedName
 
 data class Barang(
+    @SerializedName("id")
+    val id: Int,
+
     @SerializedName("nama")
     val nama: String,
 
