@@ -32,7 +32,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -51,6 +50,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
@@ -58,6 +58,7 @@ import com.example.praktam2_2417051054.R
 import com.example.praktam2_2417051054.SharedData
 import com.example.praktam2_2417051054.data.model.Barang
 import com.example.praktam2_2417051054.data.repository.BarangRepository
+import com.example.praktam2_2417051054.formatRibuan
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -209,7 +210,7 @@ fun Kasir(modifier: Modifier = Modifier, navController: NavController, onBarangL
                         unfocusedContainerColor = MaterialTheme.colorScheme.surface,
                     ),
                     shape = RoundedCornerShape(20.dp),
-                    placeholder = { Text(text = "Cari barang...", color = MaterialTheme.colorScheme.secondary) },
+                    placeholder = { Text(text = "Cari barang...", fontSize = 14.sp, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.secondary) },
                     leadingIcon = {
                         Icon(
                             imageVector = Icons.Default.Search,
@@ -238,7 +239,7 @@ fun Kasir(modifier: Modifier = Modifier, navController: NavController, onBarangL
                     onClick = {
                         coroutineScope.launch {
                             isLoading = true
-                            delay(2000)
+                            delay(500)
                             isLoading = false
 
                             navController.navigate("pembayaran")
@@ -249,7 +250,7 @@ fun Kasir(modifier: Modifier = Modifier, navController: NavController, onBarangL
                         containerColor = MaterialTheme.colorScheme.primary,
                         contentColor = MaterialTheme.colorScheme.onPrimary
                     ),
-                    enabled = !isLoading
+                    enabled = !SharedData.keranjang.isEmpty() && !isLoading
                 ) {
                     if (isLoading) {
                         CircularProgressIndicator(
@@ -286,8 +287,8 @@ fun DetailScreen(barang: Barang, jumlahBeli: Int, onJumlahChange: (Int) -> Unit)
             AsyncImage(
                 model = barang.imagesUrl,
                 contentDescription = barang.nama,
-                placeholder = painterResource(id = R.drawable.gula),
-                error = painterResource(id = R.drawable.telur),
+                placeholder = painterResource(id = R.drawable.loading),
+                error = painterResource(id = R.drawable.error_image),
 
                 modifier = Modifier
                     .size(80.dp)
@@ -300,7 +301,7 @@ fun DetailScreen(barang: Barang, jumlahBeli: Int, onJumlahChange: (Int) -> Unit)
             Spacer(Modifier.width(15.dp))
 
             Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
-                Text(text = barang.nama, style = MaterialTheme.typography.titleLarge)
+                Text(text = barang.nama, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
                 Text(text = "Sisa Stok: ${barang.stok}", style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.secondary)
 
                 Row(
@@ -308,7 +309,7 @@ fun DetailScreen(barang: Barang, jumlahBeli: Int, onJumlahChange: (Int) -> Unit)
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Text(text = "Rp ${barang.harga}", style = MaterialTheme.typography.bodyLarge)
+                    Text(text = "Rp ${barang.harga.formatRibuan()}", style = MaterialTheme.typography.bodyLarge)
 
                     Row(
                         modifier = Modifier

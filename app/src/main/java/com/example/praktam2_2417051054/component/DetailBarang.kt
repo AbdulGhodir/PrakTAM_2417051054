@@ -1,10 +1,11 @@
-package com.example.praktam2_2417051054.Component
+package com.example.praktam2_2417051054.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,9 +14,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,18 +31,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.praktam2_2417051054.R
 import com.example.praktam2_2417051054.data.model.Barang
+import com.example.praktam2_2417051054.formatRibuan
 
 @Composable
 fun DetailBarang(modifier: Modifier = Modifier, barang: Barang, navController: NavController) {
-
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -44,21 +54,22 @@ fun DetailBarang(modifier: Modifier = Modifier, barang: Barang, navController: N
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 30.dp),
             verticalArrangement = Arrangement.spacedBy(30.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(Modifier.height(170.dp))
+            Spacer(Modifier.height(90.dp))
 
             AsyncImage(
                 model = barang.imagesUrl,
                 contentDescription = barang.nama,
-                placeholder = painterResource(id = R.drawable.gula),
-                error = painterResource(id = R.drawable.telur),
+                placeholder = painterResource(id = R.drawable.loading),
+                error = painterResource(id = R.drawable.error_image),
 
                 modifier = Modifier
                     .fillMaxWidth()
-                    .size(300.dp)
+                    .height(300.dp)
                     .clip(RoundedCornerShape(10.dp))
                     .background(MaterialTheme.colorScheme.surface)
                     .padding(5.dp),
@@ -66,17 +77,15 @@ fun DetailBarang(modifier: Modifier = Modifier, barang: Barang, navController: N
             )
 
             Column(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                Arrangement.spacedBy(8.dp)
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(text = barang.nama, style = MaterialTheme.typography.headlineLarge)
-                Text(text = "Rp ${barang.harga}", style = MaterialTheme.typography.headlineMedium, color = MaterialTheme.colorScheme.primary)
+                Text(text = "Rp ${barang.harga.formatRibuan()}", style = MaterialTheme.typography.headlineMedium, color = MaterialTheme.colorScheme.primary)
             }
 
             Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(20.dp)
             ) {
                 Column(
@@ -103,6 +112,47 @@ fun DetailBarang(modifier: Modifier = Modifier, barang: Barang, navController: N
                     Text(text = "${barang.terjual} Pcs", style = MaterialTheme.typography.headlineMedium)
                 }
             }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 10.dp),
+                horizontalArrangement = Arrangement.spacedBy(15.dp)
+            ) {
+                Button(
+                    onClick = { /* TODO: Navigasi ke halaman Edit Produk */ },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(50.dp),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
+                    ),
+                    contentPadding = PaddingValues(0.dp)
+                ) {
+                    Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit", modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text("Edit", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                }
+
+                Button(
+                    onClick = { /* TODO: Tampilkan konfirmasi hapus produk */ },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(50.dp),
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFFEF4444),
+                        contentColor = Color.White
+                    ),
+                    contentPadding = PaddingValues(0.dp)
+                ) {
+                    Icon(imageVector = Icons.Default.Delete, contentDescription = "Hapus", modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text("Hapus", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                }
+            }
         }
 
         // Top Bar
@@ -121,7 +171,7 @@ fun DetailBarang(modifier: Modifier = Modifier, barang: Barang, navController: N
                     modifier = Modifier
                         .size(15.dp)
                         .scale(2.5f)
-                        .clickable{
+                        .clickable {
                             if (navController.currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED) {
                                 navController.popBackStack()
                             }

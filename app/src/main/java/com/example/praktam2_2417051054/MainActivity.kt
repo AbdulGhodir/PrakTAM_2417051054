@@ -39,16 +39,22 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.navigation.NavHostController
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.praktam2_2417051054.Component.DetailBarang
+import com.example.praktam2_2417051054.component.DetailBarang
 import com.example.praktam2_2417051054.data.model.Barang
+import com.example.praktam2_2417051054.data.model.HistorySource
 import com.example.praktam2_2417051054.pages.DaftarBarang
 import com.example.praktam2_2417051054.pages.Dashboard
 import com.example.praktam2_2417051054.pages.Kasir
 import com.example.praktam2_2417051054.pages.Pembayaran
+import com.example.praktam2_2417051054.pages.Profil
+import com.example.praktam2_2417051054.pages.Riwayat
 import com.example.praktam2_2417051054.pages.Struk
+import java.text.NumberFormat
+import java.util.Locale
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,7 +76,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val halamanSaatIni = navBackStackEntry?.destination?.route ?: "home"
-                val noNavbar = listOf("detail/{id}", "kasir", "daftarBarang", "pembayaran", "struk")
+                val noNavbar = listOf("detail/{id}", "kasir", "daftarBarang", "pembayaran", "struk/{kodeTransaksi}")
 
                 Scaffold(
                     modifier = Modifier
@@ -135,8 +141,20 @@ fun AppNavigation(modifier: Modifier, navController: NavHostController) {
             Pembayaran(modifier = modifier, navController = navController)
         }
 
-        composable("struk") {
-            Struk(modifier = modifier, navController = navController)
+        composable("struk/{kodeTransaksi}") { backStackEntry ->
+            val kodeTransaksi = backStackEntry.arguments?.getString("kodeTransaksi")
+            val transaksi = HistorySource.historyTransaksi.find { it.kodeTransaksi == kodeTransaksi }
+            if (transaksi != null) {
+                Struk(modifier = modifier, navController = navController, transaksi = transaksi)
+            }
+        }
+
+        composable("riwayat") {
+            Riwayat(modifier = modifier, navController = navController)
+        }
+
+        composable("profil") {
+            Profil(modifier = modifier, navController = navController)
         }
 
         composable("detail/{id}") { backStackEntry ->
@@ -149,9 +167,11 @@ fun AppNavigation(modifier: Modifier, navController: NavHostController) {
     }
 }
 
-object SharedData {
-    var keranjang by mutableStateOf(mapOf<Barang, Int>())
-    var uangTunai by mutableStateOf(0)
+fun Int.formatRibuan(): String {
+    val localeID = Locale("id", "ID")
+    val formatter = NumberFormat.getNumberInstance(localeID)
+
+    return formatter.format(this)
 }
 
 @Composable
@@ -215,9 +235,9 @@ fun Navbar(navController: NavController) {
         NavigationBarItem(
             icon = { Icon(painter = painterResource(id = R.drawable.ic_history), contentDescription = "Riwayat", modifier = Modifier.size(30.dp)) },
             label = { Text(text = "Riwayat") },
-            selected = halamanSaatIni == "Riwayat",
+            selected = halamanSaatIni == "riwayat",
             onClick = {
-                navController.navigate("home") {
+                navController.navigate("riwayat") {
                     popUpTo(navController.graph.startDestinationId) { saveState = true }
                     launchSingleTop = true
                     restoreState = true
@@ -237,9 +257,9 @@ fun Navbar(navController: NavController) {
         NavigationBarItem(
             icon = { Icon(Icons.Filled.Person, contentDescription = "Profil", modifier = Modifier.size(30.dp)) },
             label = { Text(text = "Profil") },
-            selected = halamanSaatIni == "Profil",
+            selected = halamanSaatIni == "profil",
             onClick = {
-                navController.navigate("home") {
+                navController.navigate("profil") {
                     popUpTo(navController.graph.startDestinationId) { saveState = true }
                     launchSingleTop = true
                     restoreState = true
@@ -256,4 +276,9 @@ fun Navbar(navController: NavController) {
             )
         )
     }
+}
+
+object SharedData {
+    var keranjang by mutableStateOf(mapOf<Barang, Int>())
+    var uangTunai by mutableIntStateOf(0)
 }

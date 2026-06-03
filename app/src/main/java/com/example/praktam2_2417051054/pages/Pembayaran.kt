@@ -53,8 +53,13 @@ import com.example.praktam2_2417051054.SharedData
 import com.example.praktam2_2417051054.data.model.Barang
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.text.input.KeyboardType
+import com.example.praktam2_2417051054.data.model.History
+import com.example.praktam2_2417051054.data.model.HistorySource
+import com.example.praktam2_2417051054.formatRibuan
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun Pembayaran(modifier: Modifier = Modifier, navController: NavController) {
@@ -76,7 +81,7 @@ fun Pembayaran(modifier: Modifier = Modifier, navController: NavController) {
                 .padding(horizontal = 24.dp)
                 .verticalScroll(rememberScrollState())
         ) {
-            Spacer(Modifier.height(130.dp))
+            Spacer(Modifier.height(120.dp))
 
             Text(
                 text = "Rincian Pesanan",
@@ -117,7 +122,7 @@ fun Pembayaran(modifier: Modifier = Modifier, navController: NavController) {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                         Text(text = "Subtotal", color = MaterialTheme.colorScheme.secondary, fontSize = 14.sp)
-                        Text(text = "Rp $totalHarga", color = MaterialTheme.colorScheme.secondary, fontSize = 14.sp)
+                        Text(text = "Rp ${totalHarga.formatRibuan()}", color = MaterialTheme.colorScheme.secondary, fontSize = 14.sp)
                     }
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                         Text(text = "Pajak ${persentasePajak}%", color = MaterialTheme.colorScheme.secondary, fontSize = 14.sp)
@@ -128,7 +133,7 @@ fun Pembayaran(modifier: Modifier = Modifier, navController: NavController) {
 
                     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                         Text(text = "Total Pembayaran", fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                        Text(text = "Rp ${totalHarga + pajak}", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                        Text(text = "Rp ${(totalHarga + pajak).formatRibuan()}", fontWeight = FontWeight.Bold, fontSize = 16.sp)
                     }
                 }
             }
@@ -190,7 +195,25 @@ fun Pembayaran(modifier: Modifier = Modifier, navController: NavController) {
                         delay(500)
                         isLoading = false
 
-                        navController.navigate("struk")
+                        val urutanRiwayat = HistorySource.historyTransaksi.size + 1
+                        val copyDaftarBelanja = SharedData.keranjang
+                        val copyUangTunai = SharedData.uangTunai
+
+                        val transaksi = History(
+                            kodeTransaksi = "PJ-${urutanRiwayat.toString().padStart(3, '0')}",
+                            waktuTransaksi = "30/06/2026 20:00",
+                            daftarBelanja = copyDaftarBelanja,
+                            uangTunai = copyUangTunai,
+                            kasir = "Abdul Ghodir"
+                        )
+                        HistorySource.transaksiBaru(transaksi)
+
+                        SharedData.keranjang = mapOf()
+                        SharedData.uangTunai = 0
+
+                        navController.navigate("struk/${transaksi.kodeTransaksi}") {
+                            popUpTo("pembayaran") { inclusive = true }
+                        }
                     }
                 },
                 modifier = Modifier
@@ -262,9 +285,9 @@ fun ItemRincianBarang(barang: Barang, jumlahBeli: Int) {
         Column(modifier = Modifier.weight(1f)) {
             Text(text = barang.nama, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
             Spacer(modifier = Modifier.height(4.dp))
-            Text(text = "$jumlahBeli x Rp ${barang.harga}", fontSize = 12.sp, color = MaterialTheme.colorScheme.secondary)
+            Text(text = "$jumlahBeli x Rp ${barang.harga.formatRibuan()}", fontSize = 12.sp, color = MaterialTheme.colorScheme.secondary)
         }
-        Text(text = "Rp ${barang.harga * jumlahBeli}", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+        Text(text = "Rp ${(barang.harga * jumlahBeli).formatRibuan()}", fontSize = 14.sp, fontWeight = FontWeight.Bold)
     }
 }
 

@@ -1,5 +1,6 @@
 package com.example.praktam2_2417051054.pages
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,23 +30,27 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.praktam2_2417051054.SharedData
 import com.example.praktam2_2417051054.data.model.Barang
+import com.example.praktam2_2417051054.data.model.History
+import com.example.praktam2_2417051054.formatRibuan
 import kotlin.collections.component1
 import kotlin.collections.component2
 
 @Composable
-fun Struk(modifier: Modifier = Modifier, navController: NavController) {
-    val totalHarga = SharedData.keranjang.entries.sumOf { (barang, jumlahBarang) ->
+fun Struk(modifier: Modifier = Modifier, navController: NavController, transaksi: History) {
+    val totalHarga = transaksi.daftarBelanja.entries.sumOf { (barang, jumlahBarang) ->
         barang.harga * jumlahBarang
     }
     val persentasePajak = 10
     val pajak = totalHarga * persentasePajak / 100
+
+    BackHandler {
+        navController.popBackStack()
+    }
 
     Column(
         modifier = modifier
@@ -76,8 +81,7 @@ fun Struk(modifier: Modifier = Modifier, navController: NavController) {
                     .clip(CircleShape)
                     .background(Color.White.copy(alpha = 0.1f))
                     .clickable {
-                        SharedData.keranjang = mapOf()
-                        navController.navigate("kasir")
+                        navController.popBackStack()
                     },
                 contentAlignment = Alignment.Center
             ) {
@@ -117,28 +121,28 @@ fun Struk(modifier: Modifier = Modifier, navController: NavController) {
             GarisStruk()
             Spacer(modifier = Modifier.height(16.dp))
 
-            InfoBarisStruk("No. Struk", "INV-2605-046")
+            InfoBarisStruk("No. Struk", transaksi.kodeTransaksi)
             Spacer(modifier = Modifier.height(8.dp))
-            InfoBarisStruk("Waktu", "30/05/2026 15:05")
+            InfoBarisStruk("Waktu", transaksi.waktuTransaksi)
             Spacer(modifier = Modifier.height(8.dp))
-            InfoBarisStruk("Kasir", "Abdul Ghodir")
+            InfoBarisStruk("Kasir", transaksi.kasir)
 
             Spacer(modifier = Modifier.height(16.dp))
             GarisStruk()
             Spacer(modifier = Modifier.height(16.dp))
 
-            SharedData.keranjang.toList().forEachIndexed { index, (barang, jumlahBeli) ->
+            transaksi.daftarBelanja.toList().forEachIndexed { index, (barang, jumlahBeli) ->
                 ItemBarisStruk(barang, jumlahBeli)
-                if (index < SharedData.keranjang.size - 1) {
+                if (index < transaksi.daftarBelanja.size - 1) {
                     Spacer(modifier = Modifier.height(12.dp))
                 }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            InfoBarisStruk("Subtotal", "54.500")
+            InfoBarisStruk("Subtotal", "Rp ${totalHarga.formatRibuan()}")
             Spacer(modifier = Modifier.height(8.dp))
-            InfoBarisStruk("Pajak ${persentasePajak}%", pajak.toString())
+            InfoBarisStruk("Pajak ${persentasePajak}%", "Rp ${pajak.formatRibuan()}")
 
             Spacer(modifier = Modifier.height(12.dp))
 
@@ -156,16 +160,16 @@ fun Struk(modifier: Modifier = Modifier, navController: NavController) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(text = "TOTAL", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
-                Text(text = "Rp 54.500", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                Text(text = "Rp ${(totalHarga + pajak).formatRibuan()}", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
             }
 
             Spacer(modifier = Modifier.height(16.dp))
             GarisStruk()
             Spacer(modifier = Modifier.height(16.dp))
 
-            InfoBarisStruk("Tunai", SharedData.uangTunai.toString())
+            InfoBarisStruk("Tunai", "Rp ${transaksi.uangTunai.formatRibuan()}")
             Spacer(modifier = Modifier.height(8.dp))
-            InfoBarisStruk("Kembali", (SharedData.uangTunai - totalHarga - pajak).toString())
+            InfoBarisStruk("Kembali", "Rp ${(transaksi.uangTunai - totalHarga - pajak).formatRibuan()}")
 
             Spacer(modifier = Modifier.height(8.dp))
         }
@@ -192,9 +196,9 @@ fun ItemBarisStruk(barang: Barang, jumlahBeli: Int) {
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(text = barang.nama, fontSize = 14.sp, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
-            Text(text = "$jumlahBeli x ${barang.harga}", fontSize = 12.sp, color = Color.Gray)
+            Text(text = "$jumlahBeli x ${barang.harga.formatRibuan()}", fontSize = 12.sp, color = Color.Gray)
         }
-        Text(text = "Rp ${barang.harga * jumlahBeli}", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+        Text(text = "Rp ${(barang.harga * jumlahBeli).formatRibuan()}", fontSize = 14.sp, fontWeight = FontWeight.Bold)
     }
 }
 
@@ -205,12 +209,4 @@ fun GarisStruk() {
         thickness = 1.dp,
         color = Color.LightGray
     )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun StrukPreview() {
-    MaterialTheme {
-        Struk(navController = rememberNavController())
-    }
 }

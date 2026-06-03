@@ -51,7 +51,9 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.praktam2_2417051054.R
 import com.example.praktam2_2417051054.data.model.Barang
+import com.example.praktam2_2417051054.data.model.HistorySource
 import com.example.praktam2_2417051054.data.repository.BarangRepository
+import com.example.praktam2_2417051054.formatRibuan
 import com.example.praktam2_2417051054.ui.theme.IconAbuBg
 import com.example.praktam2_2417051054.ui.theme.IconOren
 import com.example.praktam2_2417051054.ui.theme.IconOrenBg
@@ -141,7 +143,7 @@ fun Dashboard(modifier: Modifier = Modifier, navController: NavController, onBar
                             Spacer(Modifier.height(5.dp))
 
                             Row(verticalAlignment = Alignment.Bottom) {
-                                Text(text = "45", style = MaterialTheme.typography.headlineLarge)
+                                Text(text = HistorySource.historyTransaksi.size.toString(), style = MaterialTheme.typography.headlineLarge)
                                 Text(text = " Pelanggan", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.secondary)
                             }
                         }
@@ -155,13 +157,17 @@ fun Dashboard(modifier: Modifier = Modifier, navController: NavController, onBar
                         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
                         shape = RoundedCornerShape(20.dp)
                     ) {
+                        val barangTerjual = HistorySource.historyTransaksi.sumOf { transaksi ->
+                            transaksi.daftarBelanja.values.sum()
+                        }
+
                         Column(modifier = Modifier.padding(20.dp, 15.dp)) {
                             Text(text = "Barang Terjual", style = MaterialTheme.typography.labelLarge)
 
                             Spacer(Modifier.height(5.dp))
 
                             Row(verticalAlignment = Alignment.Bottom) {
-                                Text(text = "100", style = MaterialTheme.typography.headlineLarge)
+                                Text(text = barangTerjual.toString(), style = MaterialTheme.typography.headlineLarge)
                                 Text(text = " Item", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.secondary)
                             }
                         }
@@ -184,6 +190,7 @@ fun Dashboard(modifier: Modifier = Modifier, navController: NavController, onBar
                             contentDescription = null,
                             modifier = Modifier
                                 .size(60.dp)
+                                .clickable { navController.navigate("kasir") }
                                 .clip(shape = RoundedCornerShape(20.dp))
                                 .background(color = MaterialTheme.colorScheme.surfaceVariant)
                                 .padding(10.dp, 15.dp),
@@ -191,7 +198,7 @@ fun Dashboard(modifier: Modifier = Modifier, navController: NavController, onBar
                         )
 
                         Spacer(Modifier.height(5.dp))
-                        Text(text = "Kasir", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)
+                        Text(text = "Kasir", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.SemiBold)
                     }
 
                     Column(
@@ -203,6 +210,7 @@ fun Dashboard(modifier: Modifier = Modifier, navController: NavController, onBar
                             contentDescription = null,
                             modifier = Modifier
                                 .size(60.dp)
+                                .clickable { navController.navigate("daftarBarang") }
                                 .clip(shape = RoundedCornerShape(20.dp))
                                 .background(color = IconUnguBg)
                                 .padding(10.dp, 15.dp),
@@ -210,7 +218,7 @@ fun Dashboard(modifier: Modifier = Modifier, navController: NavController, onBar
                         )
 
                         Spacer(Modifier.height(5.dp))
-                        Text(text = "Barang", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)
+                        Text(text = "Barang", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.SemiBold)
                     }
 
                     Column(
@@ -222,6 +230,7 @@ fun Dashboard(modifier: Modifier = Modifier, navController: NavController, onBar
                             contentDescription = null,
                             modifier = Modifier
                                 .size(60.dp)
+                                .clickable { navController.navigate("riwayat") }
                                 .clip(shape = RoundedCornerShape(20.dp))
                                 .background(color = IconOrenBg)
                                 .padding(10.dp, 15.dp),
@@ -229,7 +238,7 @@ fun Dashboard(modifier: Modifier = Modifier, navController: NavController, onBar
                         )
 
                         Spacer(Modifier.height(5.dp))
-                        Text(text = "Riwayat", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)
+                        Text(text = "Riwayat", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.SemiBold)
                     }
 
                     Column(
@@ -248,7 +257,7 @@ fun Dashboard(modifier: Modifier = Modifier, navController: NavController, onBar
                         )
 
                         Spacer(Modifier.height(5.dp))
-                        Text(text = "Setting", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.Bold)
+                        Text(text = "Setting", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.secondary, fontWeight = FontWeight.SemiBold)
                     }
                 }
 
@@ -270,59 +279,69 @@ fun Dashboard(modifier: Modifier = Modifier, navController: NavController, onBar
 
                 Spacer(Modifier.height(30.dp))
 
-                Row (
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(text = "Transaksi Terakhir", style = MaterialTheme.typography.titleMedium)
-                    Text(text = "Lihat Semua", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.secondary)
-                }
-
-                Spacer(Modifier.height(15.dp))
-
-                Column (verticalArrangement = Arrangement.spacedBy(15.dp)) {
-                    for (i in 1..3) {
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .border(width = 2.dp, color = MaterialTheme.colorScheme.surfaceVariant, shape = RoundedCornerShape(20.dp)),
-                            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-                            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
-                            shape = RoundedCornerShape(20.dp)
-                        ) {
-                            Row (
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(20.dp, 15.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ){
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(
-                                        Icons.Filled.ShoppingCart,
-                                        contentDescription = null,
-                                        modifier = Modifier
-                                            .size(40.dp)
-                                            .background(color = MaterialTheme.colorScheme.surfaceVariant, shape = CircleShape)
-                                            .padding(10.dp),
-                                        tint = MaterialTheme.colorScheme.onSurface
-                                    )
-
-                                    Spacer(Modifier.width(10.dp))
-
-                                    Column(verticalArrangement = Arrangement.spacedBy((-2).dp)) {
-                                        Text(text = "PJ-0000${i}", style = MaterialTheme.typography.labelLarge)
-                                        Text(text = "1 Barang", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.secondary)
-                                    }
-                                }
-
-                                Text(text = "Rp 45.000", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
-                            }
-                        }
+                if (!HistorySource.historyTransaksi.isEmpty()) {
+                    Row (
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(text = "Transaksi Terakhir", style = MaterialTheme.typography.titleMedium)
+                        Text(text = "Lihat Semua", style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.secondary)
                     }
 
-                    Spacer(Modifier.height(20.dp))
+                    Spacer(Modifier.height(15.dp))
+
+                    Column (verticalArrangement = Arrangement.spacedBy(15.dp)) {
+                        val historyTerbaru = HistorySource.historyTransaksi.take(3)
+                        historyTerbaru.forEach { transaksi ->
+                            val kodeTransaksi = transaksi.kodeTransaksi
+                            val jumlahBarang = transaksi.daftarBelanja.values.sum()
+                            val totalHarga = transaksi.daftarBelanja.entries.sumOf { (barang, jumlahBarang) ->
+                                barang.harga * jumlahBarang
+                            }
+
+                            Card(
+                                onClick = { navController.navigate("struk/${transaksi.kodeTransaksi}") },
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .border(width = 2.dp, color = MaterialTheme.colorScheme.surfaceVariant, shape = RoundedCornerShape(20.dp)),
+                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+                                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
+                                shape = RoundedCornerShape(20.dp)
+                            ) {
+                                Row (
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(20.dp, 15.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ){
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Icon(
+                                            Icons.Filled.ShoppingCart,
+                                            contentDescription = null,
+                                            modifier = Modifier
+                                                .size(40.dp)
+                                                .background(color = MaterialTheme.colorScheme.surfaceVariant, shape = CircleShape)
+                                                .padding(10.dp),
+                                            tint = MaterialTheme.colorScheme.onSurface
+                                        )
+
+                                        Spacer(Modifier.width(10.dp))
+
+                                        Column(verticalArrangement = Arrangement.spacedBy((-2).dp)) {
+                                            Text(text = kodeTransaksi, style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.SemiBold)
+                                            Text(text = "$jumlahBarang Barang", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.secondary)
+                                        }
+                                    }
+
+                                    Text(text = "Rp ${totalHarga.formatRibuan()}", style = MaterialTheme.typography.labelLarge, fontWeight = FontWeight.Bold)
+                                }
+                            }
+                        }
+
+                        Spacer(Modifier.height(20.dp))
+                    }
                 }
             }
 
@@ -348,8 +367,14 @@ fun Dashboard(modifier: Modifier = Modifier, navController: NavController, onBar
                     elevation = CardDefaults.cardElevation(defaultElevation = 25.dp),
                     shape = RoundedCornerShape(20.dp)
                 ) {
+                    val totalPendapatan = HistorySource.historyTransaksi.sumOf { transaksi ->
+                        transaksi.daftarBelanja.entries.sumOf { (barang, jumlahBarang) ->
+                            barang.harga * jumlahBarang
+                        }
+                    }
+
                     Column(modifier = Modifier.padding(20.dp)) {
-                        Text(text = "Pendapatan Hari Ini", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.secondary)
+                        Text(text = "Total Pendapatan", style = MaterialTheme.typography.labelMedium, fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.secondary)
 
                         Spacer(Modifier.height(3.dp))
 
@@ -358,7 +383,7 @@ fun Dashboard(modifier: Modifier = Modifier, navController: NavController, onBar
 
                             Spacer(Modifier.width(5.dp))
 
-                            Text(text = "1.000.000", style = MaterialTheme.typography.displayLarge)
+                            Text(text = totalPendapatan.formatRibuan(), style = MaterialTheme.typography.displayLarge)
                         }
                     }
                 }
@@ -370,9 +395,9 @@ fun Dashboard(modifier: Modifier = Modifier, navController: NavController, onBar
 @Composable
 fun DetailScreenBarangTerlaris(barang: Barang, navController: NavController) {
     Card(
+        onClick = { navController.navigate("detail/${barang.id}") },
         modifier = Modifier
-            .width(125.dp)
-            .clickable{navController.navigate("detail/${barang.id}")},
+            .width(125.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
         elevation = CardDefaults.cardElevation(defaultElevation = 8.dp),
         shape = RoundedCornerShape(10.dp)
@@ -386,8 +411,8 @@ fun DetailScreenBarangTerlaris(barang: Barang, navController: NavController) {
             AsyncImage(
                 model = barang.imagesUrl,
                 contentDescription = barang.nama,
-                placeholder = painterResource(id = R.drawable.gula),
-                error = painterResource(id = R.drawable.telur),
+                placeholder = painterResource(id = R.drawable.loading),
+                error = painterResource(id = R.drawable.error_image),
 
                 modifier = Modifier
                     .size(100.dp)

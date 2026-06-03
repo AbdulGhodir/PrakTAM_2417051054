@@ -3,6 +3,7 @@ package com.example.praktam2_2417051054.pages
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,8 +23,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -34,6 +37,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -56,6 +60,7 @@ import coil.compose.AsyncImage
 import com.example.praktam2_2417051054.R
 import com.example.praktam2_2417051054.data.model.Barang
 import com.example.praktam2_2417051054.data.repository.BarangRepository
+import com.example.praktam2_2417051054.formatRibuan
 
 
 @Composable
@@ -107,7 +112,7 @@ fun DaftarBarang(modifier: Modifier = Modifier, navController: NavController, on
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(
-                            imageVector = Icons.Default.ArrowBack,
+                            imageVector = Icons.Default.KeyboardArrowLeft,
                             contentDescription = "Kembali",
                             tint = MaterialTheme.colorScheme.onPrimary,
                             modifier = Modifier
@@ -141,7 +146,7 @@ fun DaftarBarang(modifier: Modifier = Modifier, navController: NavController, on
                             unfocusedBorderColor = Color.Transparent
                         ),
                         shape = RoundedCornerShape(15.dp),
-                        placeholder = { Text(text = "Cari nama barang...", color = Color.Gray) },
+                        placeholder = { Text(text = "Cari nama barang...", fontSize = 14.sp, fontWeight = FontWeight.Medium, color = Color.Gray) },
                         leadingIcon = {
                             Icon(
                                 imageVector = Icons.Default.Search,
@@ -260,7 +265,7 @@ fun DaftarBarang(modifier: Modifier = Modifier, navController: NavController, on
 
                         LazyColumn(
                             verticalArrangement = Arrangement.spacedBy(15.dp),
-                            contentPadding = PaddingValues(bottom = 100.dp)
+                            contentPadding = PaddingValues(bottom = 30.dp)
                         ) {
                             val daftarBarangFilter = if (searchValue == "") {
                                 listBarang
@@ -284,16 +289,17 @@ fun DaftarBarang(modifier: Modifier = Modifier, navController: NavController, on
 @Composable
 fun DetailBarangCard(barang: Barang, navController: NavController) {
     Card(
-        modifier = Modifier.fillMaxWidth(),
+        onClick = { navController.navigate("detail/${barang.id}") },
+        modifier = Modifier
+            .fillMaxWidth(),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        shape = RoundedCornerShape(15.dp)
+        shape = RoundedCornerShape(15.dp),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(15.dp)
-                .clickable { navController.navigate("detail/${barang.id}") },
+                .padding(15.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
@@ -305,8 +311,8 @@ fun DetailBarangCard(barang: Barang, navController: NavController) {
                 AsyncImage(
                     model = barang.imagesUrl,
                     contentDescription = barang.nama,
-                    placeholder = painterResource(id = R.drawable.gula),
-                    error = painterResource(id = R.drawable.telur),
+                    placeholder = painterResource(id = R.drawable.loading),
+                    error = painterResource(id = R.drawable.error_image),
 
                     modifier = Modifier
                         .size(80.dp)
@@ -330,7 +336,7 @@ fun DetailBarangCard(barang: Barang, navController: NavController) {
                     color = MaterialTheme.colorScheme.primary
                 )
                 Text(
-                    text = "Rp ${barang.harga}",
+                    text = "Rp ${barang.harga.formatRibuan()}",
                     style = MaterialTheme.typography.bodyLarge,
                     fontWeight = FontWeight.Bold,
                     color = MaterialTheme.colorScheme.primary
