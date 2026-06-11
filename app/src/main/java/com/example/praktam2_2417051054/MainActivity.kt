@@ -48,11 +48,15 @@ import com.example.praktam2_2417051054.data.model.Barang
 import com.example.praktam2_2417051054.data.model.HistorySource
 import com.example.praktam2_2417051054.pages.DaftarBarang
 import com.example.praktam2_2417051054.pages.Dashboard
+import com.example.praktam2_2417051054.pages.EditProfil
+import com.example.praktam2_2417051054.pages.FormProduk
 import com.example.praktam2_2417051054.pages.Kasir
+import com.example.praktam2_2417051054.pages.Login
 import com.example.praktam2_2417051054.pages.Pembayaran
 import com.example.praktam2_2417051054.pages.Profil
 import com.example.praktam2_2417051054.pages.Riwayat
 import com.example.praktam2_2417051054.pages.Struk
+import com.example.praktam2_2417051054.pages.TentangAplikasi
 import java.text.NumberFormat
 import java.util.Locale
 
@@ -75,8 +79,8 @@ class MainActivity : ComponentActivity() {
             PrakTAM2_2417051054Theme {
                 val navController = rememberNavController()
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
-                val halamanSaatIni = navBackStackEntry?.destination?.route ?: "home"
-                val noNavbar = listOf("detail/{id}", "kasir", "daftarBarang", "pembayaran", "struk/{kodeTransaksi}")
+                val halamanSaatIni = navBackStackEntry?.destination?.route ?: "login"
+                val noNavbar = listOf("detail/{id}", "kasir", "daftarBarang", "pembayaran", "struk/{kodeTransaksi}", "tentangAplikasi", "editProfil", "login", "tambahBarang", "editBarang/{id}")
 
                 Scaffold(
                     modifier = Modifier
@@ -85,7 +89,13 @@ class MainActivity : ComponentActivity() {
                     floatingActionButton = {
                         if (halamanSaatIni !in noNavbar) {
                             FloatingActionButton(
-                                onClick = { navController.navigate("kasir")  },
+                                onClick = {
+                                    navController.navigate("kasir") {
+                                        popUpTo(navController.graph.startDestinationId) { saveState = true }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                },
                                 shape = CircleShape,
                                 modifier = Modifier
                                     .size(60.dp)
@@ -95,6 +105,26 @@ class MainActivity : ComponentActivity() {
                                 contentColor = Color.White,
                             ) {
                                 Icon(Icons.Filled.Add, contentDescription = "Kasir")
+                            }
+                        } else {
+                            if (halamanSaatIni == "daftarBarang") {
+                                FloatingActionButton(
+                                    onClick = {
+                                        navController.navigate("tambahBarang") {
+                                            popUpTo(navController.graph.startDestinationId) { saveState = true }
+                                            launchSingleTop = true
+                                            restoreState = true
+                                        }
+                                    },
+                                    shape = CircleShape,
+                                    modifier = Modifier
+                                        .size(60.dp)
+                                        .offset(y = (-50).dp, x = (100).dp),
+                                    containerColor = MaterialTheme.colorScheme.primary,
+                                    contentColor = Color.White,
+                                ) {
+                                    Icon(Icons.Filled.Add, contentDescription = "Tambah Barang")
+                                }
                             }
                         }
                     },
@@ -117,8 +147,12 @@ fun AppNavigation(modifier: Modifier, navController: NavHostController) {
 
     NavHost(
         navController = navController,
-        startDestination = "home"
+        startDestination = "login"
     ) {
+        composable("login") {
+            Login(modifier = modifier, navController = navController)
+        }
+
         composable("home") {
             Dashboard(modifier = modifier, navController = navController) { fechedBarang ->
                 listBarang = fechedBarang
@@ -128,6 +162,18 @@ fun AppNavigation(modifier: Modifier, navController: NavHostController) {
         composable("daftarBarang") {
             DaftarBarang(modifier = modifier, navController = navController) { fechedBarang ->
                 listBarang = fechedBarang
+            }
+        }
+
+        composable("tambahBarang") {
+                FormProduk(modifier = modifier, navController = navController)
+        }
+
+        composable("editBarang/{id}") { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")
+            val barang = listBarang.find { it.id.toString() == id }
+            if (barang != null) {
+                FormProduk(modifier = modifier, navController = navController, barangToEdit = barang)
             }
         }
 
@@ -155,6 +201,14 @@ fun AppNavigation(modifier: Modifier, navController: NavHostController) {
 
         composable("profil") {
             Profil(modifier = modifier, navController = navController)
+        }
+
+        composable("tentangAplikasi") {
+            TentangAplikasi(modifier = modifier, navController = navController)
+        }
+
+        composable("editProfil") {
+            EditProfil(modifier = modifier, navController = navController)
         }
 
         composable("detail/{id}") { backStackEntry ->

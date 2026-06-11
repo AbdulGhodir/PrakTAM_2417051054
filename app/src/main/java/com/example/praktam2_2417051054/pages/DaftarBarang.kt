@@ -367,13 +367,6 @@ fun DetailBarangCard(barang: Barang, navController: NavController) {
                     )
                 }
             }
-
-            Icon(
-                imageVector = Icons.Default.MoreVert,
-                contentDescription = "Options",
-                tint = Color.Gray,
-                modifier = Modifier.clickable {  }
-            )
         }
     }
 }

@@ -21,12 +21,22 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,6 +45,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.Lifecycle
@@ -42,10 +53,18 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.praktam2_2417051054.R
 import com.example.praktam2_2417051054.data.model.Barang
+import com.example.praktam2_2417051054.data.model.HistorySource
 import com.example.praktam2_2417051054.formatRibuan
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun DetailBarang(modifier: Modifier = Modifier, barang: Barang, navController: NavController) {
+    var konfirmasiHapus by remember { mutableStateOf(false) }
+
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -120,7 +139,9 @@ fun DetailBarang(modifier: Modifier = Modifier, barang: Barang, navController: N
                 horizontalArrangement = Arrangement.spacedBy(15.dp)
             ) {
                 Button(
-                    onClick = { /* TODO: Navigasi ke halaman Edit Produk */ },
+                    onClick = {
+                        navController.navigate("editBarang/${barang.id}")
+                    },
                     modifier = Modifier
                         .weight(1f)
                         .height(50.dp),
@@ -137,7 +158,9 @@ fun DetailBarang(modifier: Modifier = Modifier, barang: Barang, navController: N
                 }
 
                 Button(
-                    onClick = { /* TODO: Tampilkan konfirmasi hapus produk */ },
+                    onClick = {
+                        konfirmasiHapus = true
+                    },
                     modifier = Modifier
                         .weight(1f)
                         .height(50.dp),
@@ -184,5 +207,58 @@ fun DetailBarang(modifier: Modifier = Modifier, barang: Barang, navController: N
                 Text(text = "Detail Barang", color = MaterialTheme.colorScheme.onPrimary, style = MaterialTheme.typography.titleMedium)
             }
         }
+
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier.align(Alignment.BottomCenter)
+        )
+    }
+
+    if (konfirmasiHapus) {
+        AlertDialog(
+            onDismissRequest = {
+                konfirmasiHapus = false
+            },
+            icon = {
+                Icon(Icons.Default.Warning, contentDescription = "Peringatan", tint = Color.Red)
+            },
+            title = {
+                Text(text = "Hapus Semua Riwayat?", style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+            },
+            text = {
+                Text(text = "Apakah kamu yakin ingin menghapus semua data transaksi? Tindakan ini tidak dapat dibatalkan.", textAlign = TextAlign.Center)
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        konfirmasiHapus = false
+                        coroutineScope.launch {
+                            snackbarHostState.showSnackbar("Barang berhasil dihapus")
+                            delay(1000)
+
+                            navController.navigate("daftarBarang") {
+                                popUpTo(navController.graph.startDestinationId) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        }
+
+                    }
+                ) {
+                    Text("Hapus", color = Color.Red, fontWeight = FontWeight.Bold)
+                }
+            },
+            dismissButton = {
+                TextButton(
+                    onClick = {
+                        konfirmasiHapus = false
+                    }
+                ) {
+                    Text("Batal", color = Color.Gray)
+                }
+            },
+            containerColor = Color.White,
+            shape = RoundedCornerShape(16.dp)
+        )
     }
 }

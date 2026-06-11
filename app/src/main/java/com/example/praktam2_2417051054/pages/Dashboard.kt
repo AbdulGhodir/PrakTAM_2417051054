@@ -249,6 +249,11 @@ fun Dashboard(modifier: Modifier = Modifier, navController: NavController, onBar
                             Icons.Filled.Settings,
                             contentDescription = null,
                             modifier = Modifier
+                                .clickable { navController.navigate("profil") {
+                                    popUpTo(navController.graph.startDestinationId) { saveState = true }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                } }
                                 .size(60.dp)
                                 .clip(shape = RoundedCornerShape(20.dp))
                                 .background(color = IconAbuBg)
